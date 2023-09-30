@@ -1,6 +1,10 @@
 import cv2
 import dlib 
 import numpy as np 
+from matplotlib import pyplot
+from find_images import all_face_points
+import matplotlib.colors as mcolors
+import random
 
 cap = cv2.VideoCapture(0) # open the video camera (default camera)
 
@@ -28,12 +32,18 @@ while True:
         landmarks = predictor(gray, face)
         
         #Adds x y coordinates to a list
-        points = list(range(68))
+        points = list(range(17))
+        x_points = list(range(17))
+        y_points = list(range(17))
         
-        for n in range(0, 68):
+        for n in range(17):
             x = landmarks.part(n).x
             y = landmarks.part(n).y
             points[n] = [x,y]
+            x_points[n] = x
+            y_points[n] = y
+            #if n == 8:
+                #cv2.circle(frame, (x,y), 3, (255, 0, 0), -1)
             cv2.circle(frame, (x,y), 3, (255, 0, 0), -1)
 
     cv2.imshow("Frame", frame)
@@ -43,5 +53,21 @@ while True:
     if key == 27:
         break
 
-print(points)
 
+def random_color():
+    '''
+    None --> Str
+    '''
+    color = random.choice(list(mcolors.CSS4_COLORS.keys()))
+    return color
+
+get_all_face_points = all_face_points()
+
+for faces in get_all_face_points:
+    for face in get_all_face_points[faces]:
+        print(face[0])
+        print(face[1])
+        pyplot.scatter(face[0], face[1], c=random_color())
+
+pyplot.scatter(x_points, y_points, c="red")
+pyplot.show()
