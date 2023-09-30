@@ -1,0 +1,3 @@
+1. Face detection, split into face and eye detection
+2. Face recognition - compare with training data 
+3. Face change - implement filter onto face 
