@@ -1,27 +1,37 @@
-import numpy as np
 import cv2
+import dlib 
+import numpy as np 
 
-cap = cv2.VideoCapture(0)
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+cap = cv2.VideoCapture(0) # open the video camera (default camera)
+
+detector = dlib.get_frontal_face_detector()
+predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+
 
 while True:
-    ret, frame = cap.read()
+    _, frame = cap.read()
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) 
 
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-    for (x, y, w, h) in faces:
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 5)
-        roi_gray = gray[y:y+w, x:x+w]
-        roi_color = frame[y:y+h, x:x+w]
-        eyes = eye_cascade.detectMultiScale(roi_gray, 1.3, 5)
-        for (ex, ey, ew, eh) in eyes:
-            cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 5)
+    faces = detector(gray)
+    for face in faces: # looping through face -> coodinates of where the face is
+        # extract the coord points
+        x1 = face.left()
+        y1 = face.top()
+        x2 = face.right()
+        y2 = face.bottom()
 
-    cv2.imshow('frame', frame)
+        # draw a rectangle around face
+        # cv2.rectangle(frame, (x1,y1), (x2,y2), (255, 255, 255), 2)
 
-    if cv2.waitKey(1) == ord('q'):
+        landmarks = predictor(gray, face)
+        
+        for n in range(0, 68):
+            x = landmarks.part(n).x
+            y = landmarks.part(n).y
+            cv2.circle(frame, (x,y), 3, (255, 0, 0), -1)
+
+    cv2.imshow("Frame", frame)
+    key = cv2.waitKey(1)
+
+    if key == 27:
         break
-
-cap.release()
-cv2.destroyAllWindows()
