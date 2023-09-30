@@ -9,3 +9,5 @@ pandas==0.22
 theano
 keras==2.1.5
 mkl-service==1.1.2
+face-recognition==1.3.0
+
