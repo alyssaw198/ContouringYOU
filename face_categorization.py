@@ -97,7 +97,7 @@ def get_face_shape():
     x = (screen_width/2) - (w/2)
     y = (screen_height/2) - (h/2)
     root.geometry('%dx%d+%d+%d' % (w, h, x, y))
-    label = Label(root, text="This is your face shape:\n\n" + most_similar_shape).pack()
+    label = Label(root, text="This is your face shape:\n\n" + most_similar_shape.split("_")[0] + " " + most_similar_shape.split("_")[1]).pack()
     #root.after(20000, lambda: root.destroy())
     exit_button = Button(root, text="View your makeup look", command=root.destroy)
     exit_button.pack(pady=20)
