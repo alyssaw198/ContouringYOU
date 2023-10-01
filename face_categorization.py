@@ -3,7 +3,7 @@ import mediapipe as mp
 import numpy as np
 from matplotlib import pyplot
 import dlib
-from find_images import get_face_points2, get_face_points, run
+from place_face_points import get_face_points2, get_face_points, run
 
 # face mesh
 mp_face_mesh = mp.solutions.face_mesh
