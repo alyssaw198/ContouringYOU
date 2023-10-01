@@ -2,6 +2,24 @@ import cv2
 import  numpy as np
 import mediapipe as mp
 
+def createBox(frame, points, scale=5, masked=False,cropped=True):
+    
+    if masked:
+        mask = np.zeros_like(frame)
+        mask = cv2.fillPoly(mask, [points], (255,255,255))
+        frame = cv2.bitwise_and(frame,mask)
+        # cv2.imshow("Mask", frame) # isolated cropped mask frame
+
+    if cropped:
+        # cropping live camera to cropped frame
+        bbox = cv2.boundingRect(points)
+        x,y,w,h = bbox
+        frameCrop = frame[y:y+h,x:x+w]
+        frameCrop = cv2.resize(frameCrop, (0,0), None, scale, scale)
+        return frameCrop
+    else:
+        
+        return mask
 
 
 

@@ -330,6 +330,6 @@ def applyContour(faceShape):
             break
 
 if __name__ == "__main__":
-    applyContour("rectangle")
+    applyContour("heart_face")
     
   
