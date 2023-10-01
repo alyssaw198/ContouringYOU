@@ -4,6 +4,48 @@ import mediapipe as mp
 
 
 
+#blank = np.zeros((500,500,3), dtype = 'uint8')
+#cv2.imshow('Black', blank)
+#img = cv.imread('Photos/cat.jpg')
+#cv.imshow('Cat', img)
+#blank[:] = 100,20,30
+#blank[0:300, 0:500] = 150,100,255
+#cv2.imshow('color', blank)
+
+colour = (255,255,255)
+#-1 and cv.filled both fill the rectangle)
+
+
+#cv2.rectangle(blank, (0,0), (250,250), colour, thickness = cv2.FILLED)
+
+
+#cv2.putText(blank, 'Hello', (255,255), cv2.FONT_HERSHEY_TRIPLEX, 1.5, (0,255,0), 2)
+
+#cv2.imshow('Rectangle', blank)
+
+
+webcam = cv2.VideoCapture(0)
+
+
+def createBox(frame, points, scale=5, masked=False,cropped=True):
+    
+    if masked:
+        mask = np.zeros_like(frame)
+        mask = cv2.fillPoly(mask, [points], (255,255,255))
+        frame = cv2.bitwise_and(frame,mask)
+        # cv2.imshow("Mask", frame) # isolated cropped mask frame
+
+    if cropped:
+        # cropping live camera to cropped frame
+        bbox = cv2.boundingRect(points)
+        x,y,w,h = bbox
+        frameCrop = frame[y:y+h,x:x+w]
+        frameCrop = cv2.resize(frameCrop, (0,0), None, scale, scale)
+        return frameCrop
+    else:
+        return mask
+
+
 
 def round_Face(frame, list1):
     #ROUND FACE
@@ -19,19 +61,28 @@ def round_Face(frame, list1):
                     list1[352],list1[411],list1[427],list1[432],list1[430],list1[434],list1[416],list1[433],list1[376],
                     list1[366],list1[447],list1[264],list1[368],list1[301],list1[284],list1[332],list1[297]]
 
+           # pts = np.array(pts)
             pts2 = np.array(pts2)
             pts3 = np.array(pts3)
             pts4 = np.array(pts4)
             pts5 = np.array(pts5)
             pts6 = np.array(pts6)
             pts7 = np.array(pts7)
+            #cv2.fillConvexPoly(frame2, pts, (0,0,255))
 
+            #frameLips = createBox(frame, pts, 3, masked=True, cropped=False)
             frameRoundChin = createBox(frame, pts2, 3, masked=True,cropped=False)
             frameRFH = createBox(frame, pts3, 3, masked=True,cropped=False)
             frameRCheekL = createBox(frame, pts4, 3, masked=True,cropped=False)
             frameRCheekR = createBox(frame, pts5, 3, masked=True,cropped=False)
             frameRContourL = createBox(frame, pts6, 3, masked=True,cropped=False)
             frameRContourR = createBox(frame, pts7, 3, masked=True,cropped=False)
+
+            #frameColorLips = np.zeros_like(frameLips)
+            #frameColorLips[:] = 162,134,253 # coloured frame 
+            #frameColorLips = cv2.bitwise_and(frameLips, frameColorLips) # coloring the lips on the masked frame
+            #frameColorLips = cv2.GaussianBlur(frameColorLips, (7,7), 10) # blurring the edges to make it smooth
+            #frameColor = cv2.addWeighted(frame,1,frameColorLips,0.4,0)
 
             frameColorRoundChin = np.zeros_like(frameRoundChin)
             frameColorRoundChin[:] = 162,134,253 # coloured frame 
@@ -73,8 +124,40 @@ def round_Face(frame, list1):
             #END ROUND FACE
 
 
-def heart_face(frame, list1):
-    #START HEART FACE
+
+mp_face_mesh = mp.solutions.face_mesh
+faceMesh = mp_face_mesh.FaceMesh(max_num_faces = 3)
+mp_draw = mp.solutions.drawing_utils
+cap = cv2.VideoCapture(0) # open the video camera (default camera)
+
+#mpDraw = mp.solutions.drawing_utils
+#faceMesh = mpFaceMesh.FaceMesh(max_num_faces=1)
+drawSpec = mp_draw.DrawingSpec(thickness=1, circle_radius=1)
+
+
+
+while True:
+    ret, frame = cap.read()
+    list1 = list(range(468))
+    #frameRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    frame = cv2.flip(frame, 1)
+    frame2 = frame
+    results = faceMesh.process(frame)
+
+    if results.multi_face_landmarks:
+        for face_landmarks in results.multi_face_landmarks:
+            print()
+            #mp_draw.draw_landmarks(frame, face_landmarks, None, mp_draw.DrawingSpec((255,255,255), 1, 1))
+            
+            for id,lm in enumerate(face_landmarks.landmark):
+                ih, iw, ic = frame.shape
+                x,y = int(lm.x*iw), int(lm.y*ih)
+                list1[id] = (x,y)
+                #cv2.putText(frame, str(id), (x,y), cv2.FONT_HERSHEY_TRIPLEX, 0.4, (0, 0, 255), 1)
+                
+
+            #START HEART FACE
 
             Hpts1 = np.array([list1[108], list1[10], list1[337], list1[8]])
             Hpts2 = np.array([list1[194], list1[83], list1[18], list1[313], list1[418], list1[421], list1[200], list1[201]])
@@ -137,4 +220,20 @@ def heart_face(frame, list1):
             frameColorHContourR = cv2.GaussianBlur(frameColorHContourR, (7,7), 10) # blurring the edges to make it smooth
             frameColor = cv2.addWeighted(frameColor,1,frameColorHContourR,0.4,0)
 
-            return frameColor
+            #frameColor = round_Face(frame, list1)
+
+
+
+        
+    cv2.imshow("Colored", frameColor )
+    key = cv2.waitKey(1)
+
+
+    if key == 27:
+        break
+
+
+#print(list1)
+webcam.release()
+cv2.destroyAllWindows()
+
