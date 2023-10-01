@@ -4,6 +4,7 @@ import numpy as np
 from matplotlib import pyplot
 import dlib
 from place_face_points import get_face_points2, get_face_points, run
+import training_data as td
 import os
 #import tkinter as tk
 from tkinter import *
@@ -51,7 +52,7 @@ def get_face_shape():
     #cv2.destroyWindow("Frame")
         
     #get the data of the different face shapes
-    face_data_points = run()
+    face_data_points = td.training
     #get the data for the user's face 
     personal_points = get_face_points2(get_face_points(frame))
 
@@ -89,7 +90,13 @@ def get_face_shape():
     root = Tk()
     root.title("MESSAGE")
     root.eval('tk::PlaceWindow . center')
-    root.geometry("600x400")
+    w = 600 # Width 
+    h = 300 # Height
+    screen_width = root.winfo_screenwidth()  # Width of the screen
+    screen_height = root.winfo_screenheight() # Height of the screen
+    x = (screen_width/2) - (w/2)
+    y = (screen_height/2) - (h/2)
+    root.geometry('%dx%d+%d+%d' % (w, h, x, y))
     label = Label(root, text="This is your face shape:\n\n" + most_similar_shape).pack()
     #root.after(20000, lambda: root.destroy())
     exit_button = Button(root, text="View your makeup look", command=root.destroy)

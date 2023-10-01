@@ -159,4 +159,5 @@ def run():
     return face_average_points
 
 if __name__ == "__main__":
-    run()
+    print(run())
+    all_face_points_training = run()
