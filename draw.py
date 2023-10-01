@@ -226,19 +226,6 @@ while True:
 
         
     cv2.imshow("Colored", frameColor )
-
-    #mp_draw
-
-
-
-    #frame_resized = rescaleFrame(frame, scale=0.5)
-    #cv2.rectangle(frame, (0,0), (250,250), colour, thickness = cv2.FILLED)
-
-
-    
-    # print(results.multi_face_landmarks)
-    #cv2.imshow("Frame", frame)
-    #cv2.imshow("frame2", frame2)
     key = cv2.waitKey(1)
 
 
