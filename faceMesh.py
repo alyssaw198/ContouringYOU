@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np 
+import draw as draw
 
 def createBox(frame, points, scale=5, masked=False,cropped=True):
     
@@ -18,9 +19,18 @@ def createBox(frame, points, scale=5, masked=False,cropped=True):
         frameCrop = cv2.resize(frameCrop, (0,0), None, scale, scale)
         return frameCrop
     else:
+        
         return mask
 
 def diamondShape(frame, list1):
+
+    # diamond forehead 
+    list4 = []
+    list4.append(list1[10])
+    list4.append(list1[108])
+    list4.append(list1[9])
+    list4.append(list1[337])
+    list4 = np.array(list4)
 
     # diamond left undereye
     list5 = []
@@ -73,42 +83,42 @@ def diamondShape(frame, list1):
 
     frameForeHead = createBox(frame, list4, 3, masked=True, cropped=False)
     frameColorFH = np.zeros_like(frameForeHead)
-    frameColorFH[:] = 162,134,253 # coloured frame 
+    frameColorFH[:] = 226,226,255 # coloured frame 
     frameColorFH = cv2.bitwise_and(frameForeHead, frameColorFH) # coloring the lips on the masked frame
     frameColorFH = cv2.GaussianBlur(frameColorFH, (7,7), 10) # blurring the edges to make it smooth
     frameColorFH = cv2.addWeighted(frame,1,frameColorFH,0.4,0)
 
     frameLeftEye = createBox(frame, list5, 3, masked=True, cropped=False)
     frameColorLE = np.zeros_like(frameLeftEye)
-    frameColorLE[:] = 162,134,253 # coloured frame 
+    frameColorLE[:] = 226,226,255 # coloured frame 
     frameColorLE = cv2.bitwise_and(frameLeftEye, frameColorLE) # coloring the lips on the masked frame
     frameColorLE = cv2.GaussianBlur(frameColorLE, (7,7), 10) # blurring the edges to make it smooth
     frameColorLE = cv2.addWeighted(frameColorFH ,1,frameColorLE,0.4,0)
 
     frameLeftCheek = createBox(frame, list6, 3, masked=True, cropped=False)
     frameColorLC = np.zeros_like(frameLeftCheek)
-    frameColorLC[:] = 162,134,253 # coloured frame 
+    frameColorLC[:] = 88,46,255 # coloured frame 
     frameColorLC = cv2.bitwise_and(frameLeftCheek, frameColorLC) # coloring the lips on the masked frame
     frameColorLC = cv2.GaussianBlur(frameColorLC, (7,7), 10) # blurring the edges to make it smooth
     frameColorLC = cv2.addWeighted(frameColorLE ,1,frameColorLC,0.4,0)
 
     frameChin = createBox(frame, list7, 3, masked=True, cropped=False)
     frameColorChin = np.zeros_like(frameChin)
-    frameColorChin[:] = 162,134,253 # coloured frame 
+    frameColorChin[:] = 226,226,255 # coloured frame 
     frameColorChin = cv2.bitwise_and(frameChin, frameColorChin) # coloring the lips on the masked frame
     frameColorChin = cv2.GaussianBlur(frameColorChin, (7,7), 10) # blurring the edges to make it smooth
     frameColorChin = cv2.addWeighted(frameColorLC ,1,frameColorChin,0.4,0)
 
     frameRightCheek = createBox(frame, list8, 3, masked=True, cropped=False)
     frameColorRC = np.zeros_like(frameRightCheek)
-    frameColorRC[:] = 162,134,253 # coloured frame 
+    frameColorRC[:] = 88,46,255 # coloured frame 
     frameColorRC = cv2.bitwise_and(frameRightCheek, frameColorRC) # coloring the lips on the masked frame
     frameColorRC = cv2.GaussianBlur(frameColorRC, (7,7), 10) # blurring the edges to make it smooth
     frameColorRC = cv2.addWeighted(frameColorChin ,1,frameColorRC,0.4,0)
 
     frameRightEye = createBox(frame, list9, 3, masked=True, cropped=False)
     frameColorRE = np.zeros_like(frameRightEye)
-    frameColorRE[:] = 162,134,253 # coloured frame 
+    frameColorRE[:] = 226,226,255 # coloured frame 
     frameColorRE = cv2.bitwise_and(frameRightEye, frameColorRE) # coloring the lips on the masked frame
     frameColorRE = cv2.GaussianBlur(frameColorRE, (7,7), 10) # blurring the edges to make it smooth
     frameColorRE = cv2.addWeighted(frameColorRC ,1,frameColorRE,0.4,0)
@@ -221,22 +231,22 @@ def rectangleShape(frame, list1):
     list17 = np.array(list17)
 
     frameRecFH = createBox(frame, list10, 3, masked=True, cropped=False)
-    frameColorRecHR = np.zeros_like(frameRecFH)
-    frameColorRecHR[:] = 88,46,255 # coloured frame 
-    frameColorRecHR = cv2.bitwise_and(frameRecFH, frameColorRecHR) # coloring the lips on the masked frame
-    frameColorRecHR = cv2.GaussianBlur(frameColorRecHR, (7,7), 10) # blurring the edges to make it smooth
-    frameColorRecHR = cv2.addWeighted(frame ,1,frameColorRecHR,0.4,0)
+    frameColorRecFH = np.zeros_like(frameRecFH)
+    frameColorRecFH[:] = 88,46,255 # coloured frame 
+    frameColorRecFH = cv2.bitwise_and(frameRecFH, frameColorRecFH) # coloring the lips on the masked frame
+    frameColorRecFH = cv2.GaussianBlur(frameColorRecFH, (7,7), 10) # blurring the edges to make it smooth
+    frameColorRecFH = cv2.addWeighted(frame ,1,frameColorRecFH,0.4,0)
 
     frameRecLE = createBox(frame, list11, 3, masked=True, cropped=False)
     frameColorRecLE = np.zeros_like(frameRecLE)
-    frameColorRecLE[:] = 162,134,253 # coloured frame 
+    frameColorRecLE[:] = 226,226,255 # coloured frame 
     frameColorRecLE = cv2.bitwise_and(frameRecLE, frameColorRecLE) # coloring the lips on the masked frame
     frameColorRecLE = cv2.GaussianBlur(frameColorRecLE, (7,7), 10) # blurring the edges to make it smooth
-    frameColorRecLE = cv2.addWeighted(frameColorRecHR ,1,frameColorRecLE,0.4,0)
+    frameColorRecLE = cv2.addWeighted(frameColorRecFH ,1,frameColorRecLE,0.4,0)
 
     frameRecRE = createBox(frame, list12, 3, masked=True, cropped=False)
     frameColorRecRE = np.zeros_like(frameRecRE)
-    frameColorRecRE[:] = 162,134,253 # coloured frame 
+    frameColorRecRE[:] = 226,226,255 # coloured frame 
     frameColorRecRE = cv2.bitwise_and(frameRecRE, frameColorRecRE) # coloring the lips on the masked frame
     frameColorRecRE = cv2.GaussianBlur(frameColorRecRE, (7,7), 10) # blurring the edges to make it smooth
     frameColorRecRE = cv2.addWeighted(frameColorRecLE ,1,frameColorRecRE,0.4,0)
@@ -257,7 +267,7 @@ def rectangleShape(frame, list1):
 
     frameRecChin = createBox(frame, list15, 3, masked=True, cropped=False)
     frameColorRecChin = np.zeros_like(frameRecChin)
-    frameColorRecChin[:] = 88,46,255 # coloured frame 
+    frameColorRecChin[:] = 226,226,255 # coloured frame 
     frameColorRecChin = cv2.bitwise_and(frameRecChin, frameColorRecChin) # coloring the lips on the masked frame
     frameColorRecChin = cv2.GaussianBlur(frameColorRecChin, (7,7), 10) # blurring the edges to make it smooth
     frameColorRecChin = cv2.addWeighted(frameColorRecLJ ,1,frameColorRecChin,0.4,0)
@@ -309,22 +319,25 @@ def applyContour(faceShape):
 
             list1 = np.array(list1)
 
-            if faceShape == "diamond":
+            if faceShape == "diamond_face":
                 cv2.imshow("Contour", diamondShape(frame, list1))
 
-            elif faceShape == "rectangle":
+            elif faceShape == "rectangle_face":
                 cv2.imshow("Contour", rectangleShape(frame, list1))
             
-            elif faceShape == "heart":
-                cv2.imshow("Contour", heartShape(frame, list1))
+            elif faceShape == "heart_face":
+                cv2.imshow("Contour", draw.heartShape(frame, list1))
             
             else:
-                cv2.imshow("Contour", roundShape(frame, list1))
+                cv2.imshow("Contour", draw.roundShape(frame, list1))
 
         # cv2.imshow("Frame", frame)
         key = cv2.waitKey(1)
 
         if key == 27:
             break
+
+if __name__ == "__main__":
+    applyContour("diamond_face")
     
   
