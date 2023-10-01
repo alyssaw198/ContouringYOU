@@ -24,6 +24,14 @@ def createBox(frame, points, scale=5, masked=False,cropped=True):
 
 def diamondShape(frame, list1):
 
+    # diamond forehead 
+    list4 = []
+    list4.append(list1[10])
+    list4.append(list1[108])
+    list4.append(list1[9])
+    list4.append(list1[337])
+    list4 = np.array(list4)
+
     # diamond left undereye
     list5 = []
     list5.append(list1[31])
@@ -330,6 +338,6 @@ def applyContour(faceShape):
             break
 
 if __name__ == "__main__":
-    applyContour("heart_face")
+    applyContour("diamond_face")
     
   
