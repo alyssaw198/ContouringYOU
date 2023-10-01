@@ -12,8 +12,8 @@ import pandas as pd
 #uses 68 points
 def get_face_points(img):
     '''
-    str --> list
-    Takes in a path to an image and then crops the image so that each face is in the same position
+    image --> image
+    Uses dlib to plot points along the bottom of the face and crops image such that the face is in the middle of the image
     '''
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
@@ -21,14 +21,17 @@ def get_face_points(img):
     faces = detector(gray_img)
     image_height, image_width, _ = img.shape
 
+    #saves the x and y coordinates for the points that line the bottom of the face
     face_points = [[],[]]
 
+    #iterates through the face and adds points to the edges
     for face in faces:
         x1 = face.left()
         y1 = face.top()
         x2 = face.right()
         y2 = face.bottom()
         
+        #marks the face with the points
         landmarks = predictor(gray_img,face)
         for n in range(17):
             x = landmarks.part(n).x
@@ -36,14 +39,19 @@ def get_face_points(img):
             face_points[0].append(x)
             face_points[1].append(y)
             #cv2.circle(img,(x,y),5,(255,255,255),cv2.FILLED)
+    #crops the image so that the face is in the middle of the face
     cropped_image = img[:face_points[1][8]+10, face_points[0][0]-10:face_points[0][16]+10]
     #cv2.imshow("Cropped", cropped_image)
     #key = cv2.waitKey(0)
     return cropped_image
 
 
-#uses face mesh (468 points)
 def get_face_points2(img):
+    '''
+    img --> list
+    uses mediapipe to plot 468 points on the face, outlining features
+    '''
+    #wanted width and height of the image
     GLOBAL_WIDTH = 500
     GLOBAL_HEIGHT = 600
     mp_face_mesh = mp.solutions.face_mesh
@@ -56,6 +64,7 @@ def get_face_points2(img):
 
     face_points = [[],[]]
 
+    #find the scale to scale each image 
     image_height, image_width, _ = frame.shape
     height_scale = GLOBAL_HEIGHT/image_height
     width_scale = GLOBAL_WIDTH/image_width
@@ -76,6 +85,8 @@ def get_face_points2(img):
     cropped_image = img[forehead_points[1]+10:, :]
     #cv2.imshow("Frame", cropped_image)
     #key = cv2.waitKey(0)
+    
+    #rescale each image to the desired size 
     new_x_points = [i * (width_scale) for i in face_points[0]]
     new_y_points = [i * (height_scale) for i in face_points[1]]
     face_points[0] = new_x_points
@@ -117,7 +128,6 @@ def all_face_points():
 def run():
     all_faces = all_face_points()
 
-
     def random_color():
         '''
         None --> Str
@@ -127,6 +137,7 @@ def run():
 
     face_average_points = {}
 
+    #iterate through each face type and compute the average points for each plotted coordinate
     for face_type in all_faces:
         pyplot.xlim(0, 500)
         pyplot.ylim(150, 600)
